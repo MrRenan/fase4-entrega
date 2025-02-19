@@ -2,6 +2,8 @@ package br.com.fiap.fase4entrega.features.adapter.out;
 
 import br.com.fiap.fase4entrega.features.adapter.out.mapper.EntregaMapper;
 import br.com.fiap.fase4entrega.features.domain.entity.Entrega;
+import br.com.fiap.fase4entrega.features.domain.exception.EntregaNaoAtualizadaException;
+import br.com.fiap.fase4entrega.features.domain.exception.EntregaNaoEncontradaException;
 import br.com.fiap.fase4entrega.features.port.EntregaPort;
 import br.com.fiap.fase4entrega.infra.mongodb.document.EntregaDocument;
 import br.com.fiap.fase4entrega.infra.mongodb.repository.EntregaRepository;
@@ -18,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static br.com.fiap.fase4entrega.infra.restapi.v1.model.Status.*;
 
 @Component
 @RequiredArgsConstructor
@@ -36,26 +40,16 @@ public class EntregaAdapter implements EntregaPort {
         ClienteEntity clienteEntity = obterCliente(pedidoEntity);
 
         novoEntrega.setPedidoId(pedidoEntity.getId());
-        novoEntrega.setStatus(Status.CRIADO);
+        novoEntrega.setStatus(CRIADO);
         novoEntrega.setDataPrevistaEntrega(LocalDate.now().plusDays(5));
         novoEntrega.setDataEntrega(null);
-        novoEntrega.setCodigoRastreio(UUID.randomUUID().toString());
+        novoEntrega.setCodigoRastreio(gerarCodigoRastreio());
         novoEntrega.setUltimaAtualizacao(LocalDateTime.now());
         novoEntrega.setEndereco(mapper.paraEndereco(clienteEntity.getEndereco()));
 
         EntregaDocument entregaDocument = mapper.paraEntregaDocument(novoEntrega);
 
-        EntregaDocument entregaCriada = entregaRepository.save(entregaDocument);
-
-        return mapper.paraEntrega(entregaCriada);
-    }
-
-    private ClienteEntity obterCliente(PedidoEntity pedidoEntity) {
-        return clienteClient.obterCliente(pedidoEntity.getCliente().getId());
-    }
-
-    private PedidoEntity obterPedido(Entrega entrega) {
-        return pedidoClient.obterPedido(entrega.getPedidoId());
+        return criarEntrega(entregaDocument);
     }
 
     @Override
@@ -70,30 +64,63 @@ public class EntregaAdapter implements EntregaPort {
     public Entrega obterEntregaPorId(String id) {
         return entregaRepository.findById(id)
                 .map(mapper::paraEntrega)
-                .orElseThrow(() -> new RuntimeException("Entrega não encontrada."));
+                .orElseThrow(() -> new EntregaNaoEncontradaException("Entrega não encontrada."));
     }
 
     @Override
     public Entrega atualizarEntrega(Entrega entrega) {
-        return new Entrega();
+        Entrega entregaExistente = obterEntrega(entrega.getEntregaId());
+        try {
+            return criarEntrega(mapper.paraEntregaDocument(entregaExistente));
+        } catch (Exception e) {
+            throw new EntregaNaoAtualizadaException("Não foi possivel atualizar a entrega.");
+        }
+
     }
 
     @Override
     public Entrega cancelarEntrega(String id) {
-        return null;
+        return atualizarStatusEntrega(id, CANCELADO);
     }
 
     @Override
     public Entrega acompanharEntrega(String id) {
-        return entregaRepository.findById(id)
-                .map(mapper::paraEntrega)
-                .orElseThrow(() -> new RuntimeException("Entrega não encontrada."));
+        return obterEntrega(id);
 
     }
 
     @Override
     public Entrega finalizarEntrega(String id) {
-        return null;
+        return atualizarStatusEntrega(id, ENTREGUE);
+    }
+
+    private ClienteEntity obterCliente(PedidoEntity pedidoEntity) {
+        return clienteClient.obterCliente(pedidoEntity.getCliente().getId());
+    }
+
+    private PedidoEntity obterPedido(Entrega entrega) {
+        return pedidoClient.obterPedido(entrega.getPedidoId());
+    }
+
+    private Entrega criarEntrega(EntregaDocument entregaDocument) {
+        return mapper.paraEntrega(entregaRepository.save(entregaDocument));
+    }
+
+    private Entrega obterEntrega(String id) {
+        return entregaRepository.findById(id)
+                .map(mapper::paraEntrega)
+                .orElseThrow(() -> new RuntimeException("Entrega não encontrada"));
+    }
+
+    private Entrega atualizarStatusEntrega(String id, Status status) {
+        Entrega entrega = obterEntrega(id);
+        entrega.setStatus(status);
+        EntregaDocument atualizado = entregaRepository.save(mapper.paraEntregaDocument(entrega));
+        return mapper.paraEntrega(atualizado);
+    }
+
+    private String gerarCodigoRastreio() {
+        return "TRACK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
 }
