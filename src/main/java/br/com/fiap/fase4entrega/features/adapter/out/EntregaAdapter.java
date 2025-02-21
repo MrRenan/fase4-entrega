@@ -94,6 +94,12 @@ public class EntregaAdapter implements EntregaPort {
         return atualizarStatusEntrega(id, ENTREGUE);
     }
 
+    @Override
+    public void deletarEntrega(String id) {
+        Entrega entrega = obterEntrega(id);
+        entregaRepository.delete(mapper.paraEntregaDocument(entrega));
+    }
+
     private ClienteEntity obterCliente(PedidoEntity pedidoEntity) {
         return clienteClient.obterCliente(pedidoEntity.getCliente().getId());
     }

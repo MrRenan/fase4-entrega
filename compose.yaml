@@ -1,13 +1,27 @@
 services:
   mongodb:
     image: mongo:latest
-    container_name: mongodb
+    container_name: fase4entrega
     environment:
       MONGO_INITDB_ROOT_USERNAME:
       MONGO_INITDB_ROOT_PASSWORD:
       MONGO_INITDB_DATABASE: fase4entrega
     ports:
-      - "27017:27017"
+      - "27020:27017"
+
+  fase4-entrega:
+    image: fase4-entrega:latest
+    container_name: fase4-entrega-app
+    restart: always
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/fase4entrega
+    depends_on:
+      - mongodb
+    networks:
+      - app_network
+
 networks:
   app_network:
     driver: bridge

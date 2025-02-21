@@ -19,4 +19,6 @@ public interface EntregaPort {
     Entrega acompanharEntrega(String id);
 
     Entrega finalizarEntrega(String id);
+
+    void deletarEntrega(String id);
 }

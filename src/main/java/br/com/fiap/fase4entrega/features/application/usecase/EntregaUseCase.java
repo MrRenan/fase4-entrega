@@ -36,4 +36,8 @@ public class EntregaUseCase {
     public Entrega finalizarEntrega(String id) {
         return service.finalizarEntrega(id);
     }
+
+    public void deletarEntrega(String id) {
+        service.deletarEntrega(id);
+    }
 }

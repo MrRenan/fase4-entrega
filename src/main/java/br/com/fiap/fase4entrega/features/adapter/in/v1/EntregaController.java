@@ -58,4 +58,9 @@ public class EntregaController implements EntregaApi {
         Entrega entrega = useCase.finalizarEntrega(id);
         return mapper.paraEntregaResponse(entrega);
     }
+
+    @Override
+    public void deleteEntrega(String id) {
+        useCase.deletarEntrega(id);
+    }
 }

@@ -36,4 +36,8 @@ public class EntregaService {
     public Entrega finalizarEntrega(String id) {
         return adapter.finalizarEntrega(id);
     }
+
+    public void deletarEntrega(String id) {
+        adapter.deletarEntrega(id);
+    }
 }

@@ -83,4 +83,8 @@ public class Entrega {
     public void setUltimaAtualizacao(LocalDateTime ultimaAtualizacao) {
         this.ultimaAtualizacao = ultimaAtualizacao;
     }
+
+    public Entrega(String pedidoId) {
+        this.pedidoId = pedidoId;
+    }
 }
