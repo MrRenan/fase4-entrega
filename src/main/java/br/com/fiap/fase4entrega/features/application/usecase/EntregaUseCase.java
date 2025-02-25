@@ -5,6 +5,7 @@ import br.com.fiap.fase4entrega.features.domain.entity.Entrega;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -39,5 +40,9 @@ public class EntregaUseCase {
 
     public void deletarEntrega(String id) {
         service.deletarEntrega(id);
+    }
+
+    public Entrega atualizarLatitudeLongitude(String id, BigDecimal latitude, BigDecimal longitude) {
+        return service.atualizarLatitudeLongitude(id, latitude, longitude);
     }
 }

@@ -3,6 +3,7 @@ package br.com.fiap.fase4entrega.infra.mongodb.document;
 import lombok.Builder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,7 +18,9 @@ public record EntregaDocument (
         LocalDate dataEntrega,
         EnderecoDocument endereco,
         String codigoRastreio,
-        LocalDateTime ultimaAtualizacao
+        LocalDateTime ultimaAtualizacao,
+        BigDecimal latitude,
+        BigDecimal longitude
 ){
     @Builder
     public record EnderecoDocument(

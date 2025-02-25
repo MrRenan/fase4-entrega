@@ -15,13 +15,14 @@ import br.com.fiap.fase4entrega.infra.restclient.pedido.entity.PedidoEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static br.com.fiap.fase4entrega.infra.restapi.v1.model.Status.*;
+import static java.time.LocalDate.now;
 
 @Component
 @RequiredArgsConstructor
@@ -41,11 +42,13 @@ public class EntregaAdapter implements EntregaPort {
 
         novoEntrega.setPedidoId(pedidoEntity.getId());
         novoEntrega.setStatus(CRIADO);
-        novoEntrega.setDataPrevistaEntrega(LocalDate.now().plusDays(5));
+        novoEntrega.setDataPrevistaEntrega(now().plusDays(5));
         novoEntrega.setDataEntrega(null);
         novoEntrega.setCodigoRastreio(gerarCodigoRastreio());
         novoEntrega.setUltimaAtualizacao(LocalDateTime.now());
         novoEntrega.setEndereco(mapper.paraEndereco(clienteEntity.getEndereco()));
+        novoEntrega.setLatitude(BigDecimal.valueOf(-23.6916828));
+        novoEntrega.setLongitude(BigDecimal.valueOf(-46.4482505));
 
         EntregaDocument entregaDocument = mapper.paraEntregaDocument(novoEntrega);
 
@@ -100,6 +103,15 @@ public class EntregaAdapter implements EntregaPort {
         entregaRepository.delete(mapper.paraEntregaDocument(entrega));
     }
 
+    @Override
+    public Entrega atualizarLatitudeLongitude(String id, BigDecimal latitude, BigDecimal longitude) {
+        Entrega entrega = obterEntrega(id);
+        entrega.setLatitude(latitude);
+        entrega.setLongitude(longitude);
+        EntregaDocument atualizado = entregaRepository.save(mapper.paraEntregaDocument(entrega));
+        return mapper.paraEntrega(atualizado);
+    }
+
     private ClienteEntity obterCliente(PedidoEntity pedidoEntity) {
         return clienteClient.obterCliente(pedidoEntity.getCliente().getId());
     }
@@ -109,7 +121,8 @@ public class EntregaAdapter implements EntregaPort {
     }
 
     private Entrega criarEntrega(EntregaDocument entregaDocument) {
-        return mapper.paraEntrega(entregaRepository.save(entregaDocument));
+        EntregaDocument entregaCriada = entregaRepository.save(entregaDocument);
+        return mapper.paraEntrega(entregaCriada);
     }
 
     private Entrega obterEntrega(String id) {
@@ -121,6 +134,9 @@ public class EntregaAdapter implements EntregaPort {
     private Entrega atualizarStatusEntrega(String id, Status status) {
         Entrega entrega = obterEntrega(id);
         entrega.setStatus(status);
+        if(ENTREGUE.equals(status)) {
+            entrega.setDataEntrega(now());
+        }
         EntregaDocument atualizado = entregaRepository.save(mapper.paraEntregaDocument(entrega));
         return mapper.paraEntrega(atualizado);
     }

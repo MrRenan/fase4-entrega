@@ -9,6 +9,7 @@ import br.com.fiap.fase4entrega.infra.restapi.v1.model.EntregaResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,5 +63,11 @@ public class EntregaController implements EntregaApi {
     @Override
     public void deleteEntrega(String id) {
         useCase.deletarEntrega(id);
+    }
+
+    @Override
+    public EntregaResponse atualizarLatitudeLongitude(String id, BigDecimal latitude, BigDecimal longitude) {
+        Entrega entrega = useCase.atualizarLatitudeLongitude(id, latitude, longitude);
+        return mapper.paraEntregaResponse(entrega);
     }
 }

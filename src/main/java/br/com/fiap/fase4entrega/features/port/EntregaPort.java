@@ -2,6 +2,7 @@ package br.com.fiap.fase4entrega.features.port;
 
 import br.com.fiap.fase4entrega.features.domain.entity.Entrega;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface EntregaPort {
@@ -21,4 +22,6 @@ public interface EntregaPort {
     Entrega finalizarEntrega(String id);
 
     void deletarEntrega(String id);
+
+    Entrega atualizarLatitudeLongitude(String id, BigDecimal latitude, BigDecimal longitude);
 }

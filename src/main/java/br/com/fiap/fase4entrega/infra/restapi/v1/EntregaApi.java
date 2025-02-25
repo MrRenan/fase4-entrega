@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -44,9 +45,15 @@ public interface EntregaApi {
     @ResponseStatus(OK)
     EntregaResponse finalizarEntrega(@PathVariable String id);
 
-
     @Operation(summary = "Deletar entrega.")
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     void deleteEntrega(@PathVariable String id);
+
+    @Operation(summary = "Atualizar coordenadas.")
+    @PutMapping("/{id}/coordenadas/{latitude}/{longitude}")
+    @ResponseStatus(OK)
+    EntregaResponse atualizarLatitudeLongitude(@PathVariable("id") String id,
+                                               @PathVariable("latitude") BigDecimal latitude,
+                                               @PathVariable("longitude") BigDecimal longitude);
 }

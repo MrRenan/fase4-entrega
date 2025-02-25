@@ -2,6 +2,7 @@ package br.com.fiap.fase4entrega.infra.restapi.v1.model;
 
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -15,7 +16,9 @@ public record EntregaResponse(
         LocalDate dataEntrega,
         EnderecoResponse endereco,
         String codigoRastreio,
-        LocalDateTime ultimaAtualizacao
+        LocalDateTime ultimaAtualizacao,
+        BigDecimal latitude,
+        BigDecimal longitude
 ){
     @Builder
     public record EnderecoResponse(
