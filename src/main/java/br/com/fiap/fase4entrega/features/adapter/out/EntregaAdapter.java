@@ -2,12 +2,12 @@ package br.com.fiap.fase4entrega.features.adapter.out;
 
 import br.com.fiap.fase4entrega.features.adapter.out.mapper.EntregaMapper;
 import br.com.fiap.fase4entrega.features.domain.entity.Entrega;
+import br.com.fiap.fase4entrega.features.domain.entity.Status;
 import br.com.fiap.fase4entrega.features.domain.exception.EntregaNaoAtualizadaException;
 import br.com.fiap.fase4entrega.features.domain.exception.EntregaNaoEncontradaException;
 import br.com.fiap.fase4entrega.features.port.EntregaPort;
 import br.com.fiap.fase4entrega.infra.mongodb.document.EntregaDocument;
 import br.com.fiap.fase4entrega.infra.mongodb.repository.EntregaRepository;
-import br.com.fiap.fase4entrega.infra.restapi.v1.model.Status;
 import br.com.fiap.fase4entrega.infra.restclient.cliente.ClienteClient;
 import br.com.fiap.fase4entrega.infra.restclient.cliente.entity.ClienteEntity;
 import br.com.fiap.fase4entrega.infra.restclient.pedido.PedidoClient;
@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static br.com.fiap.fase4entrega.infra.restapi.v1.model.Status.*;
+import static br.com.fiap.fase4entrega.features.domain.entity.Status.CRIADO;
+import static br.com.fiap.fase4entrega.features.domain.entity.Status.ENTREGUE;
 import static java.time.LocalDate.now;
 
 @Component
@@ -83,7 +84,7 @@ public class EntregaAdapter implements EntregaPort {
 
     @Override
     public Entrega cancelarEntrega(String id) {
-        return atualizarStatusEntrega(id, CANCELADO);
+        return atualizarStatusEntrega(id, Status.CANCELADO);
     }
 
     @Override
@@ -134,7 +135,7 @@ public class EntregaAdapter implements EntregaPort {
     private Entrega atualizarStatusEntrega(String id, Status status) {
         Entrega entrega = obterEntrega(id);
         entrega.setStatus(status);
-        if(ENTREGUE.equals(status)) {
+        if (Status.ENTREGUE.equals(status)) {
             entrega.setDataEntrega(now());
         }
         EntregaDocument atualizado = entregaRepository.save(mapper.paraEntregaDocument(entrega));

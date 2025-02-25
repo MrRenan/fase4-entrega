@@ -45,4 +45,5 @@ public class EntregaService {
     public Entrega atualizarLatitudeLongitude(String id, BigDecimal latitude, BigDecimal longitude) {
         return adapter.atualizarLatitudeLongitude(id, latitude, longitude);
     }
+
 }

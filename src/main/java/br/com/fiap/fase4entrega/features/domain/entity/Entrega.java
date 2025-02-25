@@ -1,7 +1,9 @@
 package br.com.fiap.fase4entrega.features.domain.entity;
 
-import br.com.fiap.fase4entrega.infra.restapi.v1.model.Status;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

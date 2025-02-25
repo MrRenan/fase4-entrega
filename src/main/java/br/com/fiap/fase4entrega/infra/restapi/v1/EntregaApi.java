@@ -48,7 +48,7 @@ public interface EntregaApi {
     @Operation(summary = "Deletar entrega.")
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
-    void deleteEntrega(@PathVariable String id);
+    void deletarEntrega(@PathVariable String id);
 
     @Operation(summary = "Atualizar coordenadas.")
     @PutMapping("/{id}/coordenadas/{latitude}/{longitude}")

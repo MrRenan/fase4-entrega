@@ -36,7 +36,6 @@ public class EntregaController implements EntregaApi {
     }
 
     @Override
-    @PutMapping("/{id}/cancelar")
     public EntregaResponse cancelarEntrega(@PathVariable String id) {
         Entrega entrega = useCase.cancelarEntrega(id);
         return mapper.paraEntregaResponse(entrega);
@@ -61,7 +60,7 @@ public class EntregaController implements EntregaApi {
     }
 
     @Override
-    public void deleteEntrega(String id) {
+    public void deletarEntrega(String id) {
         useCase.deletarEntrega(id);
     }
 
